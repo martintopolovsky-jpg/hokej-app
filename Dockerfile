@@ -7,4 +7,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Gunicorn počúva na porte, ktorý Render nastaví a má dlhší timeout
 CMD gunicorn -b 0.0.0.0:$PORT app:app --timeout 120
