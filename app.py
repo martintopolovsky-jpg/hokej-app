@@ -74,5 +74,21 @@ def switch_position():
     conn.close()
     return redirect("/")
     conn.execute("ALTER TABLE players ADD COLUMN in_lineup INTEGER DEFAULT 0")
+def get_db():
+    db_exists = os.path.exists(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    if not db_exists:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS players (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            position TEXT,
+            confirmed INTEGER,
+            in_lineup INTEGER DEFAULT 0
+        )
+        """)
+        conn.commit()
+    return conn
 
 
