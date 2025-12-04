@@ -1,0 +1,8 @@
+{% if p.confirmed %}
+<form action="/toggle_lineup" method="POST" style="display:inline;">
+    <input type="hidden" name="id" value="{{p.id}}">
+    <button class="btn btn-sm btn-success">
+        {% if p.in_lineup %}Odobrať zo základnej{% else %}Pridať do základnej{% endif %}
+    </button>
+</form>
+{% endif %}
