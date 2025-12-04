@@ -113,3 +113,27 @@ def toggle_lineup():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+    @app.route("/toggle_lineup", methods=["POST"])
+def toggle_lineup():
+    player_id = request.form["id"]
+    conn = get_db()
+    player = conn.execute("SELECT in_lineup, position FROM players WHERE id=?", (player_id,)).fetchone()
+    if player:
+        if player["in_lineup"] == 0:
+            # kontrola limitov
+            if player["position"] == "obranca":
+                count = conn.execute("SELECT COUNT(*) FROM players WHERE position='obranca' AND in_lineup=1").fetchone()[0]
+                if count >= 8:
+                    conn.close()
+                    return "limit obrancov", 400
+            else:
+                count = conn.execute("SELECT COUNT(*) FROM players WHERE position='utocnik' AND in_lineup=1").fetchone()[0]
+                if count >= 12:
+                    conn.close()
+                    return "limit utocnikov", 400
+        new_value = 0 if player["in_lineup"] else 1
+        conn.execute("UPDATE players SET in_lineup=? WHERE id=?", (new_value, player_id))
+        conn.commit()
+    conn.close()
+    return "OK"
+
