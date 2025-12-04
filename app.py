@@ -4,9 +4,24 @@ import os
 
 app = Flask(__name__)
 
+# Cesta k databáze
 DB_PATH = os.path.join(os.path.dirname(__file__), "hokej.db")
 
+# Funkcia na pripojenie k databáze
 def get_db():
+    if not os.path.exists(DB_PATH):
+        # Ak databáza neexistuje, vytvoríme ju
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS players (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            position TEXT,
+            confirmed INTEGER
+        )
+        """)
+        conn.commit()
+        conn.close()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
@@ -46,6 +61,7 @@ def reset():
     conn.close()
     return redirect("/")
 
+# Spustenie Flask aplikácie (lokálne alebo Render)
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5000))  # Render nastaví PORT
     app.run(host="0.0.0.0", port=port)
