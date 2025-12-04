@@ -1,0 +1,11 @@
+hokej-app/
+│── app.py
+│── Dockerfile
+│── requirements.txt
+│── setup_db.py
+│── hokej.db        ← dostaneš ako Base64
+│── README.md
+│── templates/
+│     └── index.html
+└── static/
+      └── (prázdne)
