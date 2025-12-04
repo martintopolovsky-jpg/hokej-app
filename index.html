@@ -22,7 +22,7 @@ h3 { margin-top: 0; }
     <h3>Obrancovia</h3>
     <div id="defenders">
         {% for p in players %}
-            {% if p.position == 'obranca' %}
+            {% if p.position == 'obranca' and p.in_lineup == 0 %}
                 <div class="player" onclick="addToLineup({{p.id}}, 'obranca', this)">
                     {{p.name}}
                 </div>
@@ -33,7 +33,7 @@ h3 { margin-top: 0; }
     <h3>Útočníci</h3>
     <div id="forwards">
         {% for p in players %}
-            {% if p.position == 'utocnik' %}
+            {% if p.position == 'utocnik' and p.in_lineup == 0 %}
                 <div class="player" onclick="addToLineup({{p.id}}, 'utocnik', this)">
                     {{p.name}}
                 </div>
@@ -46,15 +46,29 @@ h3 { margin-top: 0; }
     <h3>Základná zostava</h3>
     <div>Obrancovia</div>
     <div class="lineup obranca-grid" id="defenderSlots">
-        {% for i in range(8) %}
-        <div class="slot" id="def_{{i}}"></div>
+        {% set def_index = 0 %}
+        {% for p in players %}
+            {% if p.position == 'obranca' and p.in_lineup == 1 %}
+                <div class="slot filled" id="def_{{def_index}}">{{p.name}}</div>
+                {% set def_index = def_index + 1 %}
+            {% endif %}
+        {% endfor %}
+        {% for i in def_index..7 %}
+            <div class="slot" id="def_{{i}}"></div>
         {% endfor %}
     </div>
 
     <div>Útočníci</div>
     <div class="lineup utocnik-grid" id="forwardSlots">
-        {% for i in range(12) %}
-        <div class="slot" id="att_{{i}}"></div>
+        {% set att_index = 0 %}
+        {% for p in players %}
+            {% if p.position == 'utocnik' and p.in_lineup == 1 %}
+                <div class="slot filled" id="att_{{att_index}}">{{p.name}}</div>
+                {% set att_index = att_index + 1 %}
+            {% endif %}
+        {% endfor %}
+        {% for i in att_index..11 %}
+            <div class="slot" id="att_{{i}}"></div>
         {% endfor %}
     </div>
 </div>
@@ -75,6 +89,8 @@ function addToLineup(playerId, position, elem) {
                 body: 'id=' + playerId
             });
 
+            // Odstrániť zo zoznamu ľavého stĺpca
+            elem.remove();
             break;
         }
     }
