@@ -62,3 +62,15 @@ def reset():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+    @app.route("/switch_position", methods=["POST"])
+def switch_position():
+    player_id = request.form["id"]
+    conn = get_db()
+    player = conn.execute("SELECT position FROM players WHERE id=?", (player_id,)).fetchone()
+    if player:
+        new_position = "utocnik" if player["position"] == "obranca" else "obranca"
+        conn.execute("UPDATE players SET position=? WHERE id=?", (new_position, player_id))
+        conn.commit()
+    conn.close()
+    return redirect("/")
+
