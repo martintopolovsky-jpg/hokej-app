@@ -49,12 +49,12 @@ h3 { margin-top: 0; }
         {% set def_index = 0 %}
         {% for p in players %}
             {% if p.position == 'obranca' and p.in_lineup == 1 %}
-                <div class="slot filled" id="def_{{def_index}}">{{p.name}}</div>
+                <div class="slot filled">{{p.name}}</div>
                 {% set def_index = def_index + 1 %}
             {% endif %}
         {% endfor %}
-        {% for i in def_index..7 %}
-            <div class="slot" id="def_{{i}}"></div>
+        {% for i in range(def_index, 8) %}
+            <div class="slot"></div>
         {% endfor %}
     </div>
 
@@ -63,12 +63,12 @@ h3 { margin-top: 0; }
         {% set att_index = 0 %}
         {% for p in players %}
             {% if p.position == 'utocnik' and p.in_lineup == 1 %}
-                <div class="slot filled" id="att_{{att_index}}">{{p.name}}</div>
+                <div class="slot filled">{{p.name}}</div>
                 {% set att_index = att_index + 1 %}
             {% endif %}
         {% endfor %}
-        {% for i in att_index..11 %}
-            <div class="slot" id="att_{{i}}"></div>
+        {% for i in range(att_index, 12) %}
+            <div class="slot"></div>
         {% endfor %}
     </div>
 </div>
@@ -76,26 +76,4 @@ h3 { margin-top: 0; }
 <script>
 function addToLineup(playerId, position, elem) {
     let slots = position === 'obranca' ? document.querySelectorAll('#defenderSlots .slot') 
-                                      : document.querySelectorAll('#forwardSlots .slot');
-    for(let slot of slots) {
-        if(!slot.classList.contains('filled')) {
-            slot.textContent = elem.textContent;
-            slot.classList.add('filled');
-
-            // Uloženie do DB cez fetch
-            fetch('/toggle_lineup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'id=' + playerId
-            });
-
-            // Odstrániť zo zoznamu ľavého stĺpca
-            elem.remove();
-            break;
-        }
-    }
-}
-</script>
-
-</body>
-</html>
+                                      : doc
