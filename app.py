@@ -73,4 +73,6 @@ def switch_position():
         conn.commit()
     conn.close()
     return redirect("/")
+    conn.execute("ALTER TABLE players ADD COLUMN in_lineup INTEGER DEFAULT 0")
+
 
