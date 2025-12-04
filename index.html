@@ -1,21 +1,85 @@
-<!-- Presun medzi pozíciami -->
-<form action="/switch_position" method="POST" style="display:inline;">
-    <input type="hidden" name="id" value="{{p.id}}">
-    <button class="btn btn-sm btn-warning">Presun</button>
-</form>
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Základná zostava</title>
+<style>
+body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; }
+#players, #lineup { flex: 1; }
+h3 { margin-top: 0; }
+.player { padding: 5px 10px; margin: 5px 0; background: #eee; cursor: pointer; border-radius: 4px; }
+.lineup { display: grid; gap: 10px; margin-top: 10px; }
+.obranca-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px; }
+.utocnik-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px; }
+.slot { border: 1px dashed #999; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #f9f9f9; }
+.slot.filled { background: #b3e5fc; border: 1px solid #039be5; }
+</style>
+</head>
+<body>
 
-<!-- Odstrániť hráča -->
-<form action="/delete_player" method="POST" style="display:inline;">
-    <input type="hidden" name="id" value="{{p.id}}">
-    <button class="btn btn-sm btn-danger">Odstrániť</button>
-</form>
+<div id="players">
+    <h3>Obrancovia</h3>
+    <div id="defenders">
+        {% for p in players %}
+            {% if p.position == 'obranca' %}
+                <div class="player" onclick="addToLineup({{p.id}}, 'obranca', this)">
+                    {{p.name}}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
-<!-- Pridať / Odobrať zo základnej zostavy -->
-{% if p.confirmed %}
-<form action="/toggle_lineup" method="POST" style="display:inline;">
-    <input type="hidden" name="id" value="{{p.id}}">
-    <button class="btn btn-sm btn-success">
-        {% if p.in_lineup %}Odobrať zo základnej{% else %}Pridať do základnej{% endif %}
-    </button>
-</form>
-{% endif %}
+    <h3>Útočníci</h3>
+    <div id="forwards">
+        {% for p in players %}
+            {% if p.position == 'utocnik' %}
+                <div class="player" onclick="addToLineup({{p.id}}, 'utocnik', this)">
+                    {{p.name}}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div id="lineup">
+    <h3>Základná zostava</h3>
+    <div>Obrancovia</div>
+    <div class="lineup obranca-grid" id="defenderSlots">
+        {% for i in range(8) %}
+        <div class="slot" id="def_{{i}}"></div>
+        {% endfor %}
+    </div>
+
+    <div>Útočníci</div>
+    <div class="lineup utocnik-grid" id="forwardSlots">
+        {% for i in range(12) %}
+        <div class="slot" id="att_{{i}}"></div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function addToLineup(playerId, position, elem) {
+    let slots = position === 'obranca' ? document.querySelectorAll('#defenderSlots .slot') 
+                                      : document.querySelectorAll('#forwardSlots .slot');
+    for(let slot of slots) {
+        if(!slot.classList.contains('filled')) {
+            slot.textContent = elem.textContent;
+            slot.classList.add('filled');
+
+            // Uloženie do DB cez fetch
+            fetch('/toggle_lineup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + playerId
+            });
+
+            break;
+        }
+    }
+}
+</script>
+
+</body>
+</html>
