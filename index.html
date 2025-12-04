@@ -1,3 +1,16 @@
+<!-- Presun medzi pozíciami -->
+<form action="/switch_position" method="POST" style="display:inline;">
+    <input type="hidden" name="id" value="{{p.id}}">
+    <button class="btn btn-sm btn-warning">Presun</button>
+</form>
+
+<!-- Odstrániť hráča -->
+<form action="/delete_player" method="POST" style="display:inline;">
+    <input type="hidden" name="id" value="{{p.id}}">
+    <button class="btn btn-sm btn-danger">Odstrániť</button>
+</form>
+
+<!-- Pridať / Odobrať zo základnej zostavy -->
 {% if p.confirmed %}
 <form action="/toggle_lineup" method="POST" style="display:inline;">
     <input type="hidden" name="id" value="{{p.id}}">
