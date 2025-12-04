@@ -1,0 +1,1 @@
+certutil -decode hokej.db.b64 hokej.db
